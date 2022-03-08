@@ -2,8 +2,10 @@
 pragma solidity 0.8.10;
 
 
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+
 interface INOSTRATOOLS {
-    function sendToTreasury();
+    function sendToTreasury() external returns (bool);
 }
 
 contract Treasury {
@@ -17,7 +19,11 @@ contract Treasury {
     //TODO: Add Events
 
     modifier onlyManagerOrHelper() {
-        require( _manager == msg.sender || _helper = msg.sender, "Caller is not the Manager or the Helper" );
+        require( _manager == msg.sender || _competition_helper == msg.sender, "Caller is not the Manager or the Helper" );
+        _;
+    }
+    modifier onlyManager() {
+        require( _manager == msg.sender , "Caller is not the Manager" );
         _;
     }
 
@@ -29,7 +35,7 @@ contract Treasury {
         _manager = manager;
     }   
 
-    function withdrawFromContracts() onlyManagerOrHelper() {
+    function withdrawFromContracts() public onlyManagerOrHelper() {
         // EMIT EVENT
         _scissors.sendToTreasury();
         _coffees.sendToTreasury();
@@ -40,22 +46,22 @@ contract Treasury {
     function managePrize( address _token ) external onlyManager() {
 
         uint256 amount = (getTotalTreasuryValue()*20)/100;
-        IERC20( _token ).safeTransfer( msg.sender, amount );
-        emit PrizeManaged( _token, amount );
+        IERC20( _token ).transferFrom(address(this), _manager, amount);
+       // emit PrizeManaged( _token, amount );
     }
 
     function manageAssets( address _token, uint256 _amount ) external onlyManager() {
         require(_amount <= getTotalTreasuryValue(), 'Not enough funds');
-        IERC20( _token ).safeTransfer( msg.sender, _amount );
-        emit TreasuryManaged( _token, _amount );
+        IERC20( _token ).transferFrom(address(this), _manager, _amount);
+       // emit TreasuryManaged( _token, _amount );
     }
 
-    function setCompetitionHelper(address competition_helper){
+    function setCompetitionHelper(address competition_helper) public onlyManager(){
         _competition_helper = competition_helper;
 
     }
 
-    function setManager(address manager) public {
+    function setManager(address manager) public view {
         manager = _manager;
 
     }

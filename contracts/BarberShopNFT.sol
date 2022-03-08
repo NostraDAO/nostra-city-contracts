@@ -41,7 +41,7 @@ contract NostraCityBarbershop is ERC721, ERC721Enumerable, ERC721URIStorage, Pau
     }
 
 
-    function getTokenImageIdentifier() public view returns (string memory) {
+    function getTokenImageIdentifier() public pure returns (string memory) {
         return "QmQqvQ54TWr1P5co2Dp648vcFpWn7tEg1A8xKHnkK46Rk8";
     }
     
