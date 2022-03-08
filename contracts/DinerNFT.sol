@@ -9,16 +9,21 @@ import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 
+
 contract NostraCityDiner is ERC721, ERC721Enumerable, ERC721URIStorage, Pausable, Ownable {
     using Counters for Counters.Counter;
+    
 
     Counters.Counter private _tokenIdCounter;
 
     uint256 public constant MAX_SUPPLY = 20000;
-    uint256 public constant MAX_PUBLIC_MINT = 40;
-    uint256 MINT_PRICE = 50;//DAI
-    address private _vault;
+    uint256 public constant MAX_TIER1_MINT = 50;
+    uint256 public constant MAX_TIER2_MINT = 25;
+    uint256 public constant MINT_PRICE = 200;//DAI
     IERC20 private _DAI;
+    address private _vault;
+    uint public _score = 0;
+
     //EVENTS
     //TODO: ADD EVENTS
     /** Mappings */
@@ -30,16 +35,16 @@ contract NostraCityDiner is ERC721, ERC721Enumerable, ERC721URIStorage, Pausable
     _;
   }
 
-    constructor(IERC20 DAI) ERC721("NostraCityDiner", "NCBS") {
-        _DAI = DAI;
+    constructor(address DAI, address vault) ERC721("Coffee", "NCD") {
+        _DAI = IERC20(DAI);
+        _vault = vault;
     }
 
 
-    function _baseURI() internal pure override returns (string memory) {
-        //TODO: Set baseURI
-        return "https://...";
+    function getTokenImageIdentifier() public view returns (string memory) {
+        return "QmWwyUpBQuZHpwnnftjfaT64VJSZz5F3uxTtga1FXgAUXz";
     }
-
+    
     function pause() public onlyOwner {
         _pause();
     }
@@ -47,39 +52,70 @@ contract NostraCityDiner is ERC721, ERC721Enumerable, ERC721URIStorage, Pausable
     function unpause() public onlyOwner {
         _unpause();
     }
-
-    function safeMint(address to, string memory uri, uint8 numberOfTokens) public onlyOwner payable {
+      /**
+	 * 
+     *
+	 */
+    function safeMint(address to, uint8 numberOfTokens) public onlyOwner {
         uint256 ts= totalSupply();
         uint256 mintingPrice = getMintingPrice();
-        require(!mintingPaused, 'Minting is paused');
-		require(numberOfTokens > 0, 'Mint at least 1 Diner Coffee');
-        require(presaleWhitelist1[msg.sender] || presaleWhitelist1[msg.sender] , 'Wallet not whitelisted');
+        uint256 totalMintAmountInDAI = mintingPrice * numberOfTokens;
+        uint256 mintLimit = getMintingLimit();
+        require(_DAI.balanceOf(msg.sender) >= totalMintAmountInDAI, 'Your Wallet does not have enough DAI');
+		require(numberOfTokens > 0, 'Mint at least 1 coffee');
+        require(numberOfTokens + address(this).balanceOf(msg.sender) <= mintLimit, 'You have reached your limit of tokens');
         require(ts + numberOfTokens <= MAX_SUPPLY, "Purchase would exceed max tokens");
-        safeTransferFrom(address(_DAI), msg.sender, address(this), mintingPrice * numberOfTokens);
-   
+        _DAI.transferFrom(msg.sender , address(this), totalMintAmountInDAI);
+        _score = _score + totalMintAmountInDAI;
         for (uint256 i = 0; i < numberOfTokens; i++) {
             uint256 tokenId = _tokenIdCounter.current();
         _tokenIdCounter.increment();
         _safeMint(to, tokenId);
-        _setTokenURI(tokenId, uri);
         }
         
     }
     /**
      */
-    function getMintingPrice(){
+    function getMintingPrice() private view returns (uint256) {
 
-        if (presaleWhitelist1[msg.sender]){
+        if (presaleWhitelistTier1[msg.sender]){
+           return MAX_TIER1_MINT;
+        } 
+        else if (presaleWhitelistTier2[msg.sender]) {
+            return MAX_TIER2_MINT;
+        } 
+        else {
+            return 20001;
+        }
+    }
+     /**
+     */
+    function getMintingLimit() private view returns (uint256) {
+
+        if (presaleWhitelistTier1[msg.sender]){
            return (MINT_PRICE*20)/100;
         } 
-        else if (presaleWhitelist2[msg.sender]) {
+        else if (presaleWhitelistTier2[msg.sender]) {
             return (MINT_PRICE*40)/100;
         } 
         else {
             return MINT_PRICE;
         }
     }
+      /**
+	 * 
+     *
+	 */
 
+    function walletOfOwner(address _owner) public view returns (uint256[] memory){
+        uint256 ownerTokenCount = balanceOf(_owner);
+        uint256[] memory tokenIds = new uint256[](ownerTokenCount);
+        for (uint256 i; i < ownerTokenCount; i++) {
+        tokenIds[i] = tokenOfOwnerByIndex(_owner, i);
+        }
+        return tokenIds;
+    }
+    
     function _beforeTokenTransfer(address from, address to, uint256 tokenId)
         internal
         whenNotPaused
@@ -100,11 +136,26 @@ contract NostraCityDiner is ERC721, ERC721Enumerable, ERC721URIStorage, Pausable
     function whitelistTier2(address wallet, bool status) public onlyOwner {
 		presaleWhitelistTier2[wallet] = status;
 	}
-    function sendToTreasury() public onlyVault() {
-		//
+      /**
+	 * 
+     *
+	 */
+    function sendToTreasury() public onlyVault() returns (bool) {
+        //TODO: EVENT
+		return _DAI.transferFrom(address(this), _vault, _DAI.balanceOf(address(this)));
 	}
-    function getCurrentId() public  {
-		return  _tokenIdCounter.current();
+
+    /**
+     */
+    function getCurrentScore() public view returns (uint256)  {
+		return  _score;
+	}
+    
+
+    /**
+     */
+    function setVault(address vault) public  onlyOwner  {
+		_vault = vault;
 	}
     
 
