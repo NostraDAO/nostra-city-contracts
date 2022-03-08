@@ -63,7 +63,7 @@ contract NostraCityDiner is ERC721, ERC721Enumerable, ERC721URIStorage, Pausable
         uint256 mintLimit = getMintingLimit();
         require(_DAI.balanceOf(msg.sender) >= totalMintAmountInDAI, 'Your Wallet does not have enough DAI');
 		require(numberOfTokens > 0, 'Mint at least 1 coffee');
-        require(numberOfTokens + address(this).balanceOf(msg.sender) <= mintLimit, 'You have reached your limit of tokens');
+        require(numberOfTokens + this.balanceOf(msg.sender) <= mintLimit, 'You have reached your limit of tokens');
         require(ts + numberOfTokens <= MAX_SUPPLY, "Purchase would exceed max tokens");
         _DAI.transferFrom(msg.sender , address(this), totalMintAmountInDAI);
         _score = _score + totalMintAmountInDAI;
