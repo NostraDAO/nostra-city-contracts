@@ -58,9 +58,9 @@ contract NostraCityGroceryStore is ERC721, ERC721Enumerable, ERC721URIStorage, P
 	 */
     function safeMint(address to, uint8 numberOfTokens) public onlyOwner {
         uint256 ts= totalSupply();
-        uint256 mintingPrice = getMintingPrice();
+        uint256 mintingPrice = getMintingPrice(msg.sender);
         uint256 totalMintAmountInDAI = mintingPrice * numberOfTokens;
-        uint256 mintLimit = getMintingLimit();
+        uint256 mintLimit = getMintingLimit(msg.sender);
         require(_DAI.balanceOf(msg.sender) >= totalMintAmountInDAI, 'Your Wallet does not have enough DAI');
 		require(numberOfTokens > 0, 'Mint at least 1 tomato');
         require(numberOfTokens + this.balanceOf(msg.sender) <= mintLimit, 'You have reached your limit of tokens');
@@ -77,12 +77,12 @@ contract NostraCityGroceryStore is ERC721, ERC721Enumerable, ERC721URIStorage, P
     }
     /**
      */
-    function getMintingLimit() public view returns (uint256) {
+    function getMintingLimit(address wallet) public view returns (uint256) {
 
-        if (presaleWhitelistTier1[msg.sender]){
+        if (presaleWhitelistTier1[wallet]){
            return MAX_TIER1_MINT;
         } 
-        else if (presaleWhitelistTier2[msg.sender]) {
+        else if (presaleWhitelistTier2[wallet]) {
             return MAX_TIER2_MINT;
         } 
         else {
@@ -91,12 +91,12 @@ contract NostraCityGroceryStore is ERC721, ERC721Enumerable, ERC721URIStorage, P
     }
      /**
      */
-    function getMintingPrice() public view returns (uint256) {
+     function getMintingPrice(address wallet) public view returns (uint256) {
 
-        if (presaleWhitelistTier1[msg.sender]){
+        if (presaleWhitelistTier1[wallet]){
            return (MINT_PRICE*20)/100;
         } 
-        else if (presaleWhitelistTier2[msg.sender]) {
+        else if (presaleWhitelistTier2[wallet]) {
             return (MINT_PRICE*40)/100;
         } 
         else {
