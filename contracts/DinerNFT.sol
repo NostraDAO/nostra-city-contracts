@@ -65,6 +65,7 @@ contract NostraCityDiner is ERC721, ERC721Enumerable, ERC721URIStorage, Pausable
 		require(numberOfTokens > 0, 'Mint at least 1 coffee');
         require(numberOfTokens + this.balanceOf(msg.sender) <= mintLimit, 'You have reached your limit of tokens');
         require(ts + numberOfTokens <= MAX_SUPPLY, "Purchase would exceed max tokens");
+        
         _DAI.transferFrom(msg.sender , address(this), totalMintAmountInDAI);
         _score = _score + totalMintAmountInDAI;
         for (uint256 i = 0; i < numberOfTokens; i++) {
@@ -76,7 +77,7 @@ contract NostraCityDiner is ERC721, ERC721Enumerable, ERC721URIStorage, Pausable
     }
     /**
      */
-    function getMintingPrice() private view returns (uint256) {
+    function getMintingLimit() public view returns (uint256) {
 
         if (presaleWhitelistTier1[msg.sender]){
            return MAX_TIER1_MINT;
@@ -85,12 +86,12 @@ contract NostraCityDiner is ERC721, ERC721Enumerable, ERC721URIStorage, Pausable
             return MAX_TIER2_MINT;
         } 
         else {
-            return 20001;
+            return MAX_SUPPLY;
         }
     }
      /**
      */
-    function getMintingLimit() private view returns (uint256) {
+    function getMintingPrice() public view returns (uint256) {
 
         if (presaleWhitelistTier1[msg.sender]){
            return (MINT_PRICE*20)/100;
@@ -115,7 +116,10 @@ contract NostraCityDiner is ERC721, ERC721Enumerable, ERC721URIStorage, Pausable
         }
         return tokenIds;
     }
-    
+    /**
+	 * 
+     *
+	 */
     function _beforeTokenTransfer(address from, address to, uint256 tokenId)
         internal
         whenNotPaused

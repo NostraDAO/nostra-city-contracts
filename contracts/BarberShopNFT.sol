@@ -10,7 +10,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 
 
-contract NostraCityBarbershop is ERC721, ERC721Enumerable, ERC721URIStorage, Pausable, Ownable {
+contract NostraCityBarberShop is ERC721, ERC721Enumerable, ERC721URIStorage, Pausable, Ownable {
     using Counters for Counters.Counter;
     
 
@@ -35,14 +35,14 @@ contract NostraCityBarbershop is ERC721, ERC721Enumerable, ERC721URIStorage, Pau
     _;
   }
 
-    constructor(address DAI, address vault) ERC721("Scissor", "NCBS") {
+    constructor(address DAI, address vault) ERC721("Scissor", "NCS") {
         _DAI = IERC20(DAI);
         _vault = vault;
     }
 
 
     function getTokenImageIdentifier() public pure returns (string memory) {
-        return "QmQqvQ54TWr1P5co2Dp648vcFpWn7tEg1A8xKHnkK46Rk8";
+        return "QmWwyUpBQuZHpwnnftjfaT64VJSZz5F3uxTtga1FXgAUXz";
     }
     
     function pause() public onlyOwner {
@@ -65,6 +65,7 @@ contract NostraCityBarbershop is ERC721, ERC721Enumerable, ERC721URIStorage, Pau
 		require(numberOfTokens > 0, 'Mint at least 1 scissor');
         require(numberOfTokens + this.balanceOf(msg.sender) <= mintLimit, 'You have reached your limit of tokens');
         require(ts + numberOfTokens <= MAX_SUPPLY, "Purchase would exceed max tokens");
+        
         _DAI.transferFrom(msg.sender , address(this), totalMintAmountInDAI);
         _score = _score + totalMintAmountInDAI;
         for (uint256 i = 0; i < numberOfTokens; i++) {
@@ -76,7 +77,7 @@ contract NostraCityBarbershop is ERC721, ERC721Enumerable, ERC721URIStorage, Pau
     }
     /**
      */
-    function getMintingPrice() private view returns (uint256) {
+    function getMintingLimit() public view returns (uint256) {
 
         if (presaleWhitelistTier1[msg.sender]){
            return MAX_TIER1_MINT;
@@ -85,12 +86,12 @@ contract NostraCityBarbershop is ERC721, ERC721Enumerable, ERC721URIStorage, Pau
             return MAX_TIER2_MINT;
         } 
         else {
-            return 20001;
+            return MAX_SUPPLY;
         }
     }
      /**
      */
-    function getMintingLimit() private view returns (uint256) {
+    function getMintingPrice() public view returns (uint256) {
 
         if (presaleWhitelistTier1[msg.sender]){
            return (MINT_PRICE*20)/100;
@@ -115,7 +116,10 @@ contract NostraCityBarbershop is ERC721, ERC721Enumerable, ERC721URIStorage, Pau
         }
         return tokenIds;
     }
-    
+    /**
+	 * 
+     *
+	 */
     function _beforeTokenTransfer(address from, address to, uint256 tokenId)
         internal
         whenNotPaused
