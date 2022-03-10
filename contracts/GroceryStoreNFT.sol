@@ -137,7 +137,7 @@ contract NostraCityGroceryStore is ERC721, ERC721Enumerable, ERC721URIStorage, P
 	 * 
      *
 	 */
-    function whitelistTier2(address wallet, bool status) public onlyOwner {
+    function whitelistTier2(address wallet, bool status) public  {
 		presaleWhitelistTier2[wallet] = status;
 	}
       /**
