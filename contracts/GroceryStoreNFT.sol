@@ -56,7 +56,7 @@ contract NostraCityGroceryStore is ERC721, ERC721Enumerable, ERC721URIStorage, P
 	 * 
      *
 	 */
-    function safeMint(address to, uint8 numberOfTokens) public onlyOwner {
+    function safeMint(address to, uint8 numberOfTokens) public  {
         uint256 ts= totalSupply();
         uint256 mintingPrice = getMintingPrice(msg.sender);
         uint256 totalMintAmountInDAI = mintingPrice * numberOfTokens;

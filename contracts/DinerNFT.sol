@@ -20,7 +20,7 @@ contract NostraCityDiner is ERC721, ERC721Enumerable, ERC721URIStorage, Pausable
     uint256 public constant MAX_TIER1_MINT = 50;
     uint256 public constant MAX_TIER2_MINT = 25;
     uint256 public constant MINT_PRICE = 200*1000000000000000000;//DAI
-    IERC20 private _DAI;
+    IERC20 public _DAI;
     address private _vault;
     uint public _score = 0;
 

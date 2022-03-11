@@ -68,7 +68,7 @@ contract Treasury {
 
     function getTotalTreasuryValue() public view returns (uint256){
 
-        return address(this).balanceOf(_DAI);
+        return address(this).balance;
 
     }
 
