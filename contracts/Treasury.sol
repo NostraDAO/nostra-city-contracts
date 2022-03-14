@@ -3,12 +3,13 @@ pragma solidity 0.8.10;
 
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
 interface INOSTRATOOLS {
     function sendToTreasury() external returns (bool);
 }
 
-contract Treasury {
+contract Treasury is Initializable{
     
     INOSTRATOOLS private _scissors;
     INOSTRATOOLS private _coffees;
@@ -27,7 +28,12 @@ contract Treasury {
         _;
     }
 
-    constructor(address BarberShopNFT, address DinerNFT, address GroceriesNFT, address competition_helper, address manager){
+    function initializer(address BarberShopNFT, 
+                         address DinerNFT, 
+                         address GroceriesNFT, 
+                         address competition_helper, 
+                         address manager)
+                         public initializer{
         _scissors = INOSTRATOOLS(BarberShopNFT);
         _coffees = INOSTRATOOLS(DinerNFT);
         _tomatoes = INOSTRATOOLS(GroceriesNFT);
