@@ -35,22 +35,16 @@ module.exports = {
     hardhat: {
       gasPrice: 50000000000
     },
-    testnet: {
-      url: 'https://speedy-nodes-nyc.moralis.io/fd2a0b38275c004b283ea982/avalanche/testnet',
+    mainnet: {
+      url: secret.url,
       gasPrice: 20000000000,
       accounts: [secret.key]
     },
     fuji: {
-      url: 'https://speedy-nodes-nyc.moralis.io/fd2a0b38275c004b283ea982/avalanche/testnet',
+      url: secret.url,
       gasPrice: 40000000000,
       chainId: 43113,
       accounts: [secret.key]
-    },
-    mainnet: {
-      url: "https://bsc-dataseed.binance.org/",
-      chainId: 56,
-      gasPrice: 20000000000,
-      //accounts: {mnemonic: mnemonic}
     }
   }
 
