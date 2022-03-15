@@ -12,15 +12,13 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 
 contract NostraCityDiner is ERC721, ERC721Enumerable, ERC721URIStorage, Pausable, Ownable {
     using Counters for Counters.Counter;
-    
-
     Counters.Counter private _tokenIdCounter;
 
     uint256 public constant MAX_SUPPLY = 20000;
     uint256 public constant MAX_TIER1_MINT = 50;
     uint256 public constant MAX_TIER2_MINT = 25;
     uint256 public constant MINT_PRICE = 200*1000000000000000000;//DAI
-    IERC20 public _DAI;
+    IERC20 private _DAI;
     address private _vault;
     uint public _score = 0;
 
@@ -39,16 +37,13 @@ contract NostraCityDiner is ERC721, ERC721Enumerable, ERC721URIStorage, Pausable
         _DAI = IERC20(DAI);
         _vault = vault;
     }
-
-
-    function getTokenImageIdentifier() public pure returns (string memory) {
-        return "QmWwyUpBQuZHpwnnftjfaT64VJSZz5F3uxTtga1FXgAUXz";
-    }
-    
+    /**
+     */
     function pause() public onlyOwner {
         _pause();
     }
-
+    /**
+     */
     function unpause() public onlyOwner {
         _unpause();
     }
@@ -91,7 +86,7 @@ contract NostraCityDiner is ERC721, ERC721Enumerable, ERC721URIStorage, Pausable
     }
      /**
      */
-   function getMintingPrice(address wallet) public view returns (uint256) {
+     function getMintingPrice(address wallet) public view returns (uint256) {
 
         if (presaleWhitelistTier1[wallet]){
            return (MINT_PRICE*20)/100;
@@ -137,7 +132,7 @@ contract NostraCityDiner is ERC721, ERC721Enumerable, ERC721URIStorage, Pausable
 	 * 
      *
 	 */
-    function whitelistTier2(address wallet, bool status) public onlyOwner {
+    function whitelistTier2(address wallet, bool status) public  {
 		presaleWhitelistTier2[wallet] = status;
 	}
       /**
@@ -169,13 +164,13 @@ contract NostraCityDiner is ERC721, ERC721Enumerable, ERC721URIStorage, Pausable
         super._burn(tokenId);
     }
 
-    function tokenURI(uint256 tokenId)
+    function tokenURI()
         public
         view
         override(ERC721, ERC721URIStorage)
         returns (string memory)
     {
-        return super.tokenURI(tokenId);
+        return "https://gateway.pinata.cloud/ipfs/QmWwyUpBQuZHpwnnftjfaT64VJSZz5F3uxTtga1FXgAUXz";
     }
 
     function supportsInterface(bytes4 interfaceId)

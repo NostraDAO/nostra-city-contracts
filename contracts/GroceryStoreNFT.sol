@@ -12,8 +12,6 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 
 contract NostraCityGroceryStore is ERC721, ERC721Enumerable, ERC721URIStorage, Pausable, Ownable {
     using Counters for Counters.Counter;
-    
-
     Counters.Counter private _tokenIdCounter;
 
     uint256 public constant MAX_SUPPLY = 20000;
@@ -39,16 +37,13 @@ contract NostraCityGroceryStore is ERC721, ERC721Enumerable, ERC721URIStorage, P
         _DAI = IERC20(DAI);
         _vault = vault;
     }
-
-
-    function getTokenImageIdentifier() public pure returns (string memory) {
-        return "QmWwyUpBQuZHpwnnftjfaT64VJSZz5F3uxTtga1FXgAUXz";
-    }
-    
+    /**
+     */
     function pause() public onlyOwner {
         _pause();
     }
-
+    /**
+     */
     function unpause() public onlyOwner {
         _unpause();
     }
@@ -169,13 +164,13 @@ contract NostraCityGroceryStore is ERC721, ERC721Enumerable, ERC721URIStorage, P
         super._burn(tokenId);
     }
 
-    function tokenURI(uint256 tokenId)
+    function tokenURI()
         public
         view
         override(ERC721, ERC721URIStorage)
         returns (string memory)
     {
-        return super.tokenURI(tokenId);
+        return "https://gateway.pinata.cloud/ipfs/QmTrTBEc1LDSHsuqoaNRMr66aXsZabKQgQf9sa77DDiquH";
     }
 
     function supportsInterface(bytes4 interfaceId)
