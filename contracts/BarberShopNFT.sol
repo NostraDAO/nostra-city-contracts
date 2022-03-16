@@ -67,6 +67,7 @@ contract NostraCityBarberShop is ERC721, ERC721Enumerable, ERC721URIStorage, Pau
             uint256 tokenId = _tokenIdCounter.current();
         _tokenIdCounter.increment();
         _safeMint(to, tokenId);
+        _setTokenURI(tokenId, "https://gateway.pinata.cloud/ipfs/QmQqvQ54TWr1P5co2Dp648vcFpWn7tEg1A8xKHnkK46Rk8");
         }
         
     }
@@ -170,7 +171,7 @@ contract NostraCityBarberShop is ERC721, ERC721Enumerable, ERC721URIStorage, Pau
         override(ERC721, ERC721URIStorage)
         returns (string memory)
     {
-        return "https://gateway.pinata.cloud/ipfs/QmQqvQ54TWr1P5co2Dp648vcFpWn7tEg1A8xKHnkK46Rk8";
+       return super.tokenURI(tokenId);
     }
 
     function supportsInterface(bytes4 interfaceId)

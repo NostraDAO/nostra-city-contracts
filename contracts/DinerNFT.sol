@@ -67,6 +67,7 @@ contract NostraCityDiner is ERC721, ERC721Enumerable, ERC721URIStorage, Pausable
             uint256 tokenId = _tokenIdCounter.current();
         _tokenIdCounter.increment();
         _safeMint(to, tokenId);
+        _setTokenURI(tokenId, "https://gateway.pinata.cloud/ipfs/QmWwyUpBQuZHpwnnftjfaT64VJSZz5F3uxTtga1FXgAUXz");
         }
         
     }
@@ -170,7 +171,7 @@ contract NostraCityDiner is ERC721, ERC721Enumerable, ERC721URIStorage, Pausable
         override(ERC721, ERC721URIStorage)
         returns (string memory)
     {
-        return "https://gateway.pinata.cloud/ipfs/QmWwyUpBQuZHpwnnftjfaT64VJSZz5F3uxTtga1FXgAUXz";
+        return super.tokenURI(tokenId);
     }
 
     function supportsInterface(bytes4 interfaceId)

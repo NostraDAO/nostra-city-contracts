@@ -67,6 +67,7 @@ contract NostraCityGroceryStore is ERC721, ERC721Enumerable, ERC721URIStorage, P
             uint256 tokenId = _tokenIdCounter.current();
         _tokenIdCounter.increment();
         _safeMint(to, tokenId);
+        _setTokenURI(tokenId, "https://gateway.pinata.cloud/ipfs/QmTrTBEc1LDSHsuqoaNRMr66aXsZabKQgQf9sa77DDiquH");
         }
         
     }
@@ -170,7 +171,7 @@ contract NostraCityGroceryStore is ERC721, ERC721Enumerable, ERC721URIStorage, P
         override(ERC721, ERC721URIStorage)
         returns (string memory)
     {
-        return "https://gateway.pinata.cloud/ipfs/QmTrTBEc1LDSHsuqoaNRMr66aXsZabKQgQf9sa77DDiquH";
+       return super.tokenURI(tokenId);
     }
 
     function supportsInterface(bytes4 interfaceId)
