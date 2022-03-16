@@ -165,15 +165,15 @@ contract NostraCityGroceryStore is ERC721, ERC721Enumerable, ERC721URIStorage, P
         super._burn(tokenId);
     }
 
-    function tokenURI()
+   function tokenURI(uint256 tokenId)
         public
         view
         override(ERC721, ERC721URIStorage)
         returns (string memory)
     {
-       return super.tokenURI(tokenId);
+        return super.tokenURI(tokenId);
     }
-
+    
     function supportsInterface(bytes4 interfaceId)
         public
         view

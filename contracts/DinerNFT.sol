@@ -165,7 +165,7 @@ contract NostraCityDiner is ERC721, ERC721Enumerable, ERC721URIStorage, Pausable
         super._burn(tokenId);
     }
 
-    function tokenURI()
+   function tokenURI(uint256 tokenId)
         public
         view
         override(ERC721, ERC721URIStorage)
