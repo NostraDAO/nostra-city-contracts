@@ -4,13 +4,23 @@ pragma solidity 0.8.10;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
+interface INOSTRATOOLS {
+    function pause() external;
+    function getCurrentScore() external returns (uint256);
+}
+
+interface ITreasury {
+    function withdrawFromContracts() external returns (bool);
+    function getCurrentScore() external returns (uint256);
+}
+
 contract CompetitionHelper is Initializable{
 
-    INOSTRATOOLS _scissors;
-    INOSTRATOOLS _coffees;
-    INOSTRATOOLS _tomatoes;
+    INOSTRATOOLS public _scissors;
+    INOSTRATOOLS private _coffees;
+    INOSTRATOOLS private _tomatoes;
     ITreasury _vault;
-    address public _winner;
+    address public _manager;
 
     modifier onlyManager() {
         require( _manager == msg.sender , "Caller is not the Manager" );
@@ -20,15 +30,13 @@ contract CompetitionHelper is Initializable{
 	mapping(address => uint256) public businessToScore;
     mapping(address => bool) public businessIsWinner;
 
-    function initializer(address BarberShop, 
+    function initialize (address BarberShop, 
                          address Diner, 
-                         address GroceryStore, 
-                         address treasury) 
-                         public initializer{
-       _scissors = BarberShop;
-       _coffees =  Diner;
-       _tomatoes = GroceryStore;
-       _vault = treasury;
+                         address GroceryStore) 
+                         public initializer {
+       _scissors = INOSTRATOOLS(BarberShop);
+       _coffees =  INOSTRATOOLS(Diner);
+       _tomatoes = INOSTRATOOLS(GroceryStore);
     }
     /**
      */
@@ -40,52 +48,51 @@ contract CompetitionHelper is Initializable{
         //Run the Treasury Function to retrieve the Balance fromm the NFTs
         _vault.withdrawFromContracts();
         //Calculate Winner
-        _winner = calculateWinner();
+        calculateWinner();
         //TODO: Emit event.
     }
     /**
      */
-    function calculateWinner() public view {
-        businessToScore[_scissors.address] = INOSTRATOOLS(_scissors.getCurrentScore());
-        businessToScore[_coffees.address] = INOSTRATOOLS(_coffees.getCurrentScore());
-        businessToScore[_tomatoes.address] = INOSTRATOOLS(_tomatoes.getCurrentScore());
+    function calculateWinner() private  {
+        businessToScore[address(_scissors)] = INOSTRATOOLS(_scissors).getCurrentScore();
+        businessToScore[address(_coffees)] = INOSTRATOOLS(_coffees).getCurrentScore();
+        businessToScore[address(_tomatoes)] = INOSTRATOOLS(_tomatoes).getCurrentScore();
         //Find if there are three way tie
-        if (businessToScore[_scissors.address] 
-            == businessToScore[_coffees.address] 
-            ==  businessToScore[_tomatoes.address] ){
-            businessIsWinner[_scissors.address] = true;
-            businessIsWinner[_coffees.address] = true;
-            businessIsWinner[_tomatoes.address] = true;
+        if (businessToScore[address(_scissors)] == businessToScore[address(_coffees)] &&
+           businessToScore[address(_coffees)] ==  businessToScore[address(_tomatoes)] ){
+            businessIsWinner[address(_scissors)] = true;
+            businessIsWinner[address(_coffees)] = true;
+            businessIsWinner[address(_tomatoes)] = true;
         }
         else{
         //Find the winner and ties
-         if(businessToScore[_scissors.address] > businessToScore[_coffees.address] ) {
-            if(businessToScore[_scissors.address] > businessToScore[_tomatoes.address]){
-                businessIsWinner[_scissors.address] = true;
+         if(businessToScore[address(_scissors)] > businessToScore[address(_coffees)] ) {
+            if(businessToScore[address(_scissors)] > businessToScore[address(_tomatoes)]){
+                businessIsWinner[address(_scissors)] = true;
             }
-            else if (businessToScore[_scissors.address] == businessToScore[_tomatoes.address]){
-                businessIsWinner[_scissors.address] = true;
-                businessIsWinner[_tomatoes.address] = true;
+            else if (businessToScore[address(_scissors)] == businessToScore[address(_tomatoes)]){
+                businessIsWinner[address(_scissors)] = true;
+                businessIsWinner[address(_tomatoes)] = true;
             }
             else{
-               businessIsWinner[_tomatoes.address] = true;
+               businessIsWinner[address(_tomatoes)] = true;
                }
         } 
-        else if (businessToScore[_scissors.address] == businessToScore[_coffees.address]
-                && businessToScore[_scissors.address] > businessToScore[_tomatoes.address] ){
-                    businessIsWinner[_scissors.address] = true;
-                    businessIsWinner[_coffees.address] = true;
+        else if (businessToScore[address(_scissors)] == businessToScore[address(_coffees)]
+                && businessToScore[address(_scissors)] > businessToScore[address(_tomatoes)] ){
+                    businessIsWinner[address(_scissors)] = true;
+                    businessIsWinner[address(_coffees)] = true;
         }
         else {
-            if(businessToScore[_coffees.address] > businessToScore[_tomatoes.address]){
-                businessIsWinner[_coffees.address] = true;
+            if(businessToScore[address(_coffees)] > businessToScore[address(_tomatoes)]){
+                businessIsWinner[address(_coffees)] = true;
                 }
-            else if (businessToScore[_coffees.address] == businessToScore[_tomatoes.address]){
-                    businessIsWinner[_coffees.address] = true;
-                    businessIsWinner[_tomatoes.address] = true;
+            else if (businessToScore[address(_coffees)] == businessToScore[address(_tomatoes)]){
+                    businessIsWinner[address(_coffees)] = true;
+                    businessIsWinner[address(_tomatoes)] = true;
             }
             else{ 
-                businessIsWinner[_tomatoes.address]= true;
+                businessIsWinner[address(_tomatoes)]= true;
             }
                
         }
@@ -96,8 +103,15 @@ contract CompetitionHelper is Initializable{
     
     /**
      */
-    function isAddressWinner(address business) returns (bool){
-        return businessIsWinner[business]:
+    function isAddressWinner(address business) public view returns (bool){
+        return businessIsWinner[business];
+    }
+
+      /**
+     */
+    function setVault(address vault) public onlyManager {
+        //TODO: Emit EVENT
+        _vault = ITreasury(vault);
     }
    
 }

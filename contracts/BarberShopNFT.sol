@@ -33,9 +33,8 @@ contract NostraCityBarberShop is ERC721, ERC721Enumerable, ERC721URIStorage, Pau
     _;
   }
 
-    constructor(address DAI, address vault) ERC721("Scissor", "NCBS") {
+    constructor(address DAI) ERC721("Scissor", "NCBS") {
         _DAI = IERC20(DAI);
-        _vault = vault;
     }
     /**
      */

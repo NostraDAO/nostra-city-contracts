@@ -28,12 +28,12 @@ contract Treasury is Initializable{
         _;
     }
 
-    function initializer(address BarberShopNFT, 
+    function initialize (address BarberShopNFT, 
                          address DinerNFT, 
                          address GroceriesNFT, 
                          address competition_helper, 
                          address manager)
-                         public initializer{
+                         public initializer {
         _scissors = INOSTRATOOLS(BarberShopNFT);
         _coffees = INOSTRATOOLS(DinerNFT);
         _tomatoes = INOSTRATOOLS(GroceriesNFT);

@@ -33,9 +33,8 @@ contract NostraCityGroceryStore is ERC721, ERC721Enumerable, ERC721URIStorage, P
     _;
   }
 
-    constructor(address DAI, address vault) ERC721("Tomato", "NCGS") {
+    constructor(address DAI) ERC721("Tomato", "NCGS") {
         _DAI = IERC20(DAI);
-        _vault = vault;
     }
     /**
      */
@@ -173,7 +172,7 @@ contract NostraCityGroceryStore is ERC721, ERC721Enumerable, ERC721URIStorage, P
     {
         return super.tokenURI(tokenId);
     }
-    
+
     function supportsInterface(bytes4 interfaceId)
         public
         view

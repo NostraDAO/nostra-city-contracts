@@ -33,9 +33,9 @@ contract NostraCityDiner is ERC721, ERC721Enumerable, ERC721URIStorage, Pausable
     _;
   }
 
-    constructor(address DAI, address vault) ERC721("Coffee", "NCD") {
+    constructor(address DAI) ERC721("Coffee", "NCD") {
         _DAI = IERC20(DAI);
-        _vault = vault;
+
     }
     /**
      */
