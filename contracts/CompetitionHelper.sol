@@ -32,11 +32,12 @@ contract CompetitionHelper is Initializable{
 
     function initialize (address BarberShop, 
                          address Diner, 
-                         address GroceryStore) 
+                         address GroceryStore, address manager) 
                          public initializer {
        _scissors = INOSTRATOOLS(BarberShop);
        _coffees =  INOSTRATOOLS(Diner);
        _tomatoes = INOSTRATOOLS(GroceryStore);
+       _manager = manager;
     }
     /**
      */
@@ -53,7 +54,7 @@ contract CompetitionHelper is Initializable{
     }
     /**
      */
-    function calculateWinner() private  {
+    function calculateWinner() private  onlyManager() {
         businessToScore[address(_scissors)] = INOSTRATOOLS(_scissors).getCurrentScore();
         businessToScore[address(_coffees)] = INOSTRATOOLS(_coffees).getCurrentScore();
         businessToScore[address(_tomatoes)] = INOSTRATOOLS(_tomatoes).getCurrentScore();

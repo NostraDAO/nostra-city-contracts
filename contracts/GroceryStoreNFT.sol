@@ -14,7 +14,7 @@ contract NostraCityGroceryStore is ERC721, ERC721Enumerable, ERC721URIStorage, P
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIdCounter;
 
-    uint256 public constant MAX_SUPPLY = 20000;
+    uint256 public constant MAX_SUPPLY = 1500;
     uint256 public constant MAX_TIER1_MINT = 50;
     uint256 public constant MAX_TIER2_MINT = 25;
     uint256 public constant MINT_PRICE = 200*1000000000000000000;//DAI
@@ -50,7 +50,7 @@ contract NostraCityGroceryStore is ERC721, ERC721Enumerable, ERC721URIStorage, P
 	 * 
      *
 	 */
-    function safeMint(address to, uint8 numberOfTokens) public  {
+    function safeMint( uint8 numberOfTokens) public  {
         uint256 ts= totalSupply();
         uint256 mintingPrice = getMintingPrice(msg.sender);
         uint256 totalMintAmountInDAI = mintingPrice * numberOfTokens;
@@ -65,7 +65,7 @@ contract NostraCityGroceryStore is ERC721, ERC721Enumerable, ERC721URIStorage, P
         for (uint256 i = 0; i < numberOfTokens; i++) {
             uint256 tokenId = _tokenIdCounter.current();
         _tokenIdCounter.increment();
-        _safeMint(to, tokenId);
+        _safeMint(msg.sender, tokenId);
         _setTokenURI(tokenId, "https://gateway.pinata.cloud/ipfs/QmTrTBEc1LDSHsuqoaNRMr66aXsZabKQgQf9sa77DDiquH");
         }
         
@@ -132,7 +132,7 @@ contract NostraCityGroceryStore is ERC721, ERC721Enumerable, ERC721URIStorage, P
 	 * 
      *
 	 */
-    function whitelistTier2(address wallet, bool status) public  {
+    function whitelistTier2(address wallet, bool status) public onlyOwner {
 		presaleWhitelistTier2[wallet] = status;
 	}
       /**
