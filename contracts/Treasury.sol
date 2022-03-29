@@ -67,8 +67,8 @@ contract Treasury is Initializable{
 
     }
 
-    function setManager(address manager) public view {
-        manager = _manager;
+    function setManager(address manager) public view onlyOwner {
+        _manager = manager;
 
     }
 
