@@ -4,12 +4,13 @@ pragma solidity 0.8.10;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
 interface INOSTRATOOLS {
     function sendToTreasury() external returns (bool);
 }
 
-contract Treasury is Initializable{
+contract Treasury is Initializable, Ownable{
     
     INOSTRATOOLS private _scissors;
     INOSTRATOOLS private _coffees;
@@ -67,7 +68,7 @@ contract Treasury is Initializable{
 
     }
 
-    function setManager(address manager) public view onlyOwner {
+    function setManager(address manager) public onlyOwner {
         _manager = manager;
 
     }

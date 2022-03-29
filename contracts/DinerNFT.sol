@@ -27,6 +27,7 @@ contract NostraCityDiner is ERC721, ERC721Enumerable, ERC721URIStorage, Pausable
     /** Mappings */
 	mapping(address => bool) public presaleWhitelistTier1;
     mapping(address => bool) public presaleWhitelistTier2;
+    mapping(address => uint256) public addressToTokensMinted;
 
     modifier onlyVault() {
     require( _vault == msg.sender, "Caller is not the Vault" );
@@ -58,7 +59,7 @@ contract NostraCityDiner is ERC721, ERC721Enumerable, ERC721URIStorage, Pausable
         uint256 mintLimit = getMintingLimit(msg.sender);
         require(_DAI.balanceOf(msg.sender) >= totalMintAmountInDAI, 'Your Wallet does not have enough DAI');
 		require(numberOfTokens > 0, 'Mint at least 1 coffee');
-        require(numberOfTokens + this.balanceOf(msg.sender) <= mintLimit, 'You have reached your limit of tokens');
+        require(numberOfTokens + addressToTokensMinted[msg.sender] <= mintLimit, 'You have reached your limit of tokens');
         require(ts + numberOfTokens <= MAX_SUPPLY, "Purchase would exceed max tokens");
         
         _DAI.transferFrom(msg.sender , address(this), totalMintAmountInDAI);
@@ -69,6 +70,7 @@ contract NostraCityDiner is ERC721, ERC721Enumerable, ERC721URIStorage, Pausable
         _safeMint(msg.sender, tokenId);
         _setTokenURI(tokenId, "https://gateway.pinata.cloud/ipfs/QmWwyUpBQuZHpwnnftjfaT64VJSZz5F3uxTtga1FXgAUXz");
         }
+        addressToTokensMinted[msg.sender] = addressToTokensMinted[msg.sender] + numberOfTokens;
         
     }
     /**
